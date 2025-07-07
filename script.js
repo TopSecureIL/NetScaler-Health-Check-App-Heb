@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 "בשימוש ב-SAML, כלל Relay State מוגדר למניעת חטיפת סשן.",
                 "סורק Indicator of Compromise (IoC) עבור CVE-2019-19781 אינו מראה סימני פריצה.",
                 "ה-Dashboard אינו מציג רוחב פס יוצא חריג (חשד להתקפת DTLS Amplification DDoS).",
-                "שדרוגי קושחה נבדקים על רכיב ADC נפרד בסביבת 테스트 לפני הטמעה ב-Production.",
+                "שדרוגי קושחה נבדקים על רכיב ADC נפרד בסביבת בדיקות לפני הטמעה ב-Production.",
                 "עבור VPX על vSphere: כרטיסי הרשת הם VMXNET3 (ולא E1000).",
                 "עבור VPX על vSphere: מוגדר anti-affinity ב-DRS Cluster עבור זוגות HA.",
                 "עבור VPX על vSphere: משאבי CPU/Memory שמורים, או אם לא, האפשרות Yield CPU מבוטלת.",
