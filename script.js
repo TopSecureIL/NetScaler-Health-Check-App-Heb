@@ -1,76 +1,125 @@
 document.addEventListener('DOMContentLoaded', function() {
     const healthCheckData = [
+        // This replaces the previous simplified ADC section
         {
-            category: "1. Citrix NetScaler ADC - הגדרות כלליות ואבטחה",
+            category: "NetScaler ADC - כללי",
             items: [
-                "עדכוני אבטחה: מנהלי המערכת רשומים לקבלת התראות אבטחה מ-Citrix.",
-                "גרסת קושחה (Firmware): גרסת ה-ADC מעודכנת וכוללת את כל תיקוני האבטחה הרלוונטיים.",
-                "הגנה מ-CVE-2019-19781: סורק ה-Indicator of Compromise לא מראה סימני פריצה.",
-                "הגנת Relay State: אם נעשה שימוש ב-SAML, הוגדר Relay State Rule.",
-                "סקריפט rc.netscaler: מכיל תיקונים (remediation) נדרשים.",
-                "רוחב פס יוצא: ה-Dashboard אינו מציג שימוש חריג ברוחב פס יוצא (שעלול להעיד על התקפת DTLS Amplification DDoS).",
-                "סביבת בדיקות (Test): קיימת סביבת בדיקות נפרדת לשדרוגי גרסה.",
-                "סיסמת nsroot: אינה ברירת המחדל, מנוהלת בכלי PIM, ומנהלים אינם משתמשים בה.",
-                "חשבונות משתמש מקומיים: לא קיימים חשבונות מקומיים מלבד `nsroot`.",
-                "אותנטיקציה לניהול: מוגדרת מול שרת חיצוני (רצוי LDAPS).",
-                "הגדרות LDAPS: החיבור מוצפן (פורט 636), חשבון ה-Bind הוא Service Account.",
-                "נעילת חשבון nsroot: האפשרות לאותנטיקציה חיצונית עבור `nsroot` כבויה.",
-                "מדיניות (Policies): נעשה שימוש ב-Advanced Expressions במקום Classic Expressions.",
-                "NTP ו-Time Zone מוגדרים נכון.",
-                "Syslog: שליחת לוגים מוגדרת לשרת SIEM חיצוני.",
-                "SNMP Traps נשלחים ל-Citrix ADM. ספים (Thresholds) עבור CPU ו-Memory מוגדרים.",
-                "CEIP/CUXIP: תוכנית שיפור חווית הלקוח מבוטלת.",
-                "הגדרות TCP: מוגדר פרופיל TCP מומלץ.",
-                "`Drop Invalid HTTP requests` מאופשר בהגדרות הגלובליות.",
-                "`Secure Access Only` מאופשר על כל כתובות ה-NSIP וה-SNIP הניהוליות.",
-                "תעודת ניהול (Management Certificate) תקינה וללא שגיאות.",
-                "ממשקי רשת שאינם בשימוש מבוטלים. כל VLAN מחובר לממשק יחיד.",
-                "ניתוב (Routing): קיים Default Route יחיד. אם קיימת רשת ניהול ייעודית, הוגדרו PBRs.",
-                "שרתי DNS: כתובת שרת ה-Root DNS מעודכנת.",
-                "הוסרו הגדרות ישנות שאינן בשימוש (Server Objects, Policies וכו').",
-                "המערכת מנוטרת ומגובה על ידי Citrix ADM.",
-                "ה-Dashboard מראה שאין חריגה ממשאבי CPU, זיכרון או רישוי.",
-                "הספריות `/var/core` ו-`/var/crash` אינן מכילות קבצים מהזמן האחרון."
+                "מנהלי המערכת רשומים לקבלת התראות אבטחה של Citrix.",
+                "גרסת הקושחה (firmware) מעודכנת לכל פגיעויות האבטחה האחרונות.",
+                "בשימוש ב-SAML, כלל Relay State מוגדר למניעת חטיפת סשן.",
+                "סורק Indicator of Compromise (IoC) עבור CVE-2019-19781 אינו מראה סימני פריצה.",
+                "ה-Dashboard אינו מציג רוחב פס יוצא חריג (חשד להתקפת DTLS Amplification DDoS).",
+                "שדרוגי קושחה נבדקים על רכיב ADC נפרד בסביבת 테스트 לפני הטמעה ב-Production.",
+                "עבור VPX על vSphere: כרטיסי הרשת הם VMXNET3 (ולא E1000).",
+                "עבור VPX על vSphere: מוגדר Anti-affinity ב-DRS Cluster עבור זוגות HA.",
+                "עבור VPX על vSphere: משאבי CPU/Memory שמורים, או אם לא, האפשרות Yield CPU מבוטלת.",
+                "רישיונות ה-ADC בנתיב /nsconfig/license/ אינם עומדים לפוג בקרוב.",
+                "עבור ADC פיזי: פורט ה-LOM מחובר, מוגדר, וסיסמתו אינה ברירת המחדל.",
+                "סיסמת 'nsroot' אינה ברירת המחדל, מנוהלת בכלי PIM, ואינה משמשת לכניסה שוטפת.",
+                "פוליסות בנויות באמצעות Advanced Expressions, ולא Classic Expressions.",
+                "אימות לניהול המערכת משתמש בשרת חיצוני (למשל, LDAPS).",
+                "שירות ה-LDAP מאוזן עומסים, מוצפן (LDAPS 636), ומשתמש בחשבון שירות ייעודי.",
+                "פילטר החיפוש ב-LDAP מגביל גישה לקבוצת AD ייעודית של מנהלי ה-ADC.",
+                "לחשבון 'nsroot' מבוטלת האפשרות לאימות חיצוני.",
+                "לא קיימים חשבונות משתמש מקומיים על ה-ADC מלבד 'nsroot'.",
+                "NTP ואזור זמן (Time Zone) מוגדרים כראוי.",
+                "Syslog מוגדר לשליחת לוגים לשרת SIEM חיצוני.",
+                "התראות SNMP עבור ספי CPU וזיכרון מוגדרות ונשלחות ל-ADM.",
+                "תוכנית שיפור חווית הלקוח (CUXIP) מבוטלת.",
+                "מוגדר פרופיל TCP עם ההגדרות המומלצות.",
+                "האפשרות 'Drop Invalid HTTP requests' מאופשרת בהגדרות ה-HTTP הגלובליות.",
+                "האפשרות 'Secure Access Only' מאופשרת על כל כתובות ה-NSIP ו-SNIP הניהוליות.",
+                "תעודת ה-SSL של ממשק הניהול תקינה וללא שגיאות.",
+                "רשת: ממשקים שאינם בשימוש מבוטלים.",
+                "רשת: כל VLAN מחובר לממשק או ערוץ (channel) יחיד.",
+                "רשת: מוגדר ניתוב ברירת מחדל (Default Route) יחיד בלבד.",
+                "הוסרו הגדרות שאינן בשימוש (אובייקטי שרת, פוליסות וכו').",
+                "רכיב ה-ADC מנוטר ומגובה על ידי Citrix ADM.",
+                "ה-Dashboard מראה שאין חריגה ממשאבי CPU, זיכרון או רוחב פס מעבר לקיבולת או לרישוי.",
+                "הספריות /var/core ו-/var/crash אינן מכילות קבצי קריסה מהזמן האחרון."
             ]
         },
         {
-            category: "2. NetScaler ADC בתצורת High Availability (HA)",
+            category: "NetScaler ADC - זוג High Availability (HA)",
             items: [
-                "אחידות גרסה: גרסת הקושחה זהה בשני הצמתים (nodes).",
-                "אחידות רישוי: הרישיונות המותקנים זהים בשני הצמתים.",
-                "סנכרון זמן: NTP ו-Time Zone מוגדרים וזהים בשני הצמתים.",
-                "מצב HA: הסנכרון עובד ללא שגיאות. שני הצמתים במצב `ENABLED`.",
-                "Fail-safe Mode מאופשר.",
-                "בדיקת Heartbeats: הפקודה `show ha node` מראה שמתקבלים Heartbeats בכל הממשקים.",
-                "בדיקת Failover: בוצעה בדיקת Failover יזומה, כולל בדיקת אימות RADIUS.",
-                "Sync VLAN: מוגדר VLAN ייעודי לסנכרון כדי לאפשר ISSU (בגרסה 13.0 ומעלה)."
+                "גרסת הקושחה והרישיונות המותקנים זהים בשני הצמתים.",
+                "הגדרות NTP ואזור זמן זהות בשני הצמתים.",
+                "מערך ה-HA מסתנכרן ללא שגיאות ושני הצמתים במצב ENABLED.",
+                "האפשרות Fail-safe mode מאופשרת.",
+                "הפקודה 'show ha node' מציגה heartbeats בכל הממשקים.",
+                "בוצעה בהצלחה בדיקת העברה יזומה (Failover).",
+                "מוגדר Sync VLAN כדי לאפשר שדרוג רציף (ISSU) בגרסאות ADC 13.0 ומעלה."
             ]
         },
         {
-            category: "3. NetScaler ADC SDX",
+            category: "NetScaler ADC - SDX",
             items: [
-                "חיבור LOM: פורט ה-LOM מחובר ומוגדר, וסיסמת ה-nsroot שונתה מברירת המחדל.",
-                "תקינות חומרה: ה-Dashboard ב-SDX SVM אינו מציג בעיות חומרה.",
-                "גרסת קושחה (SDX): גרסת ה-SDX עדכנית.",
-                "אבטחת SVM: סיסמת `nsroot` של ה-SVM מורכבת ואינה ברירת המחדל. הגישה לניהול מאובטחת באמצעות LDAPS.",
-                "גישה לניהול: מוגדרת גישה מאובטחת (HTTPS) בלבד לניהול ה-SVM.",
-                "רישוי: מספר רישיונות ה-SDX תואם לכמות שנרכשה.",
-                "גיבויים: גיבויי ה-SVM מוגדרים עם העברה חיצונית (External Transfer)."
+                "פורט ה-LOM מוגדר וסיסמתו אינה ברירת המחדל.",
+                "ה-Dashboard של ה-SDX SVM אינו מציג תקלות חומרה.",
+                "גרסת הקושחה של ה-SDX עדכנית (זהה או חדשה יותר מגרסת ה-VPX).",
+                "סיסמת ה-nsroot של ה-SDX SVM אינה ברירת המחדל, והניהול משתמש באימות חיצוני (LDAPS).",
+                "גישת הניהול ל-SVM נאכפת ב-HTTPS בלבד והתעודה תקינה.",
+                "אגרגציית קישורים (Channels) נוצרת ברמת ה-SDX SVM ולא בתוך כל VPX.",
+                "ל-VPX Instances מוקצים המשאבים המתאימים (רישיון Platinum, שבבי SSL, מעבד ייעודי לסביבת ייצור).",
+                "הגדרות VLAN מבוצעות בתוך ה-VPX Instances כדי למנוע אתחולים בעת שינוי."
             ]
         },
         {
-            category: "4. איזון עומסים (Load Balancing) ו-SSL",
+            category: "NetScaler ADC - איזון עומסים ו-SSL",
             items: [
-                "תיעוד: תצורת איזון העומסים מתועדת.",
-                "מוניטורים (Monitors): המוניטורים מבצעים בדיקה אפליקטיבית ולא רק בדיקת Telnet.",
-                "אבטחת שרתים: נעשה שימוש ב-Rewrite policies להסתרת כותרות מידע של שרתי הווב.",
-                "דירוג SSL: כל שרתי ה-SSL הפונים לאינטרנט מקבלים ציון A או A+ במבחן SSL Labs.",
-                "הצפנה (Ciphers): צופנים מותאמים אישית משויכים לכל SSL vServer.",
-                "פרוטוקולים ישנים: SSLv3, TLS 1.0 ו-TLS 1.1 מבוטלים בכל SSL vServer.",
-                "תוקף תעודות: התעודות בתוקף. ADM שולח התראות על תעודות שעומדות לפוג."
+                "תצורות איזון העומסים מתועדות.",
+                "המוניטורים מבצעים בדיקות ברמת האפליקציה (למשל שאילתת LDAP ספציפית) ולא רק פינג.",
+                "נעשה שימוש ב-Rewrite policies להסתרת כותרות מידע של שרתי הווב (Server, X-Powered-By).",
+                "כל שרתי ה-vServer של SSL הפונים לאינטרנט מקבלים ציון A או A+ במבחן SSL Labs.",
+                "שרתי vServer להפניה (HTTP ל-HTTPS) נמצאים במצב UP (שיטת Responder) ולא DOWN (שיטת Backup URL).",
+                "חבילות צופנים (cipher suites) מותאמות ומאובטחות משויכות לכל vServer של SSL.",
+                "פרוטוקולי SSLv3 ו-TLSv1.0 מבוטלים בכל vServer של SSL.",
+                "הגדרת SSL Renegotiation היא NONSECURE (גלובלית או דרך פרופילי SSL).",
+                "תעודות Root אינן מקושרות לתעודות ביניים (intermediate) בשרשרת.",
+                "התעודות בתוקף; ADM מספק התראות על תעודות שעומדות לפוג.",
+                "שירות ADM Analytics (Web Insight) מופעל עבור Virtual Servers של HTTP.",
+                "עבור רישיון Premium: מוגדר Bot Management או Web Application Firewall (WAF)."
+            ]
+        },
+        {
+            category: "Citrix NetScaler ADM",
+            items: [
+                "קיימת מערכת ADM המנהלת את כל רכיבי ה-ADC.",
+                "גרסת הקושחה של ה-ADM עדכנית.",
+                "ה-ADM פרוס בתצורת High Availability עם כתובת IP צפה (Floating IP).",
+                "האפשרות 'Prompt credentials for instance login' מופעלת להבטחת רישום ביקורת (audit) תקין.",
+                "סיסמת ה-nsroot של ה-ADM אינה ברירת המחדל, והניהול משתמש באימות חיצוני (LDAPS).",
+                "ל-ADM מוקצים מספיק שטח דיסק, CPU וזיכרון.",
+                "מוגדרים חוקי אירועים (Event Rules) לשליחת אימייל למנהלים על התראות קריטיות/חשובות מה-ADC.",
+                "גיבויי ה-ADC ב-ADM מוגדרים להעברה לשרת חיצוני.",
+                "רישוי ה-VIP ב-ADM מוגדר ומוקצה כראוי.",
+                "עבור HDX Insight: שירות AppFlow מופעל על vServers של Gateway ומקושר ל-Director דרך HTTPS."
+            ]
+        },
+        {
+            category: "NetScaler Citrix Gateway (ICA Proxy)",
+            items: [
+                "שרת ה-vServer של ה-Gateway מקבל ציון A או A+ במבחן SSL Labs.",
+                "מוגדר פרופיל TCP עם ההגדרות המומלצות.",
+                "האפשרות DTLS מופעלת על ה-vServer לתמיכה בפרוטוקול EDT.",
+                "התקשורת ל-StoreFront היא באמצעות HTTPS ומאוזנת עומסים.",
+                "הגדרות ה-STA ב-Gateway תואמות להגדרות ב-StoreFront.",
+                "עבור אימות דו-שלבי (RADIUS), נבדקה העברה יזומה (failover) משני צמתי ה-HA.",
+                "עבור אימות SAML, מוגדר 'relaystateRule' למניעת חטיפת סשן.",
+                "בשימוש ב-Native OTP, תכונת ה-AD ושדות הכניסה ב-nFactor מוצפנים."
+            ]
+        },
+        {
+            category: "NetScaler ADC - GSLB",
+            items: [
+                "רשומות ה-DNS עבור דומיינים של GSLB מואצלות (delegated) כראוי לשירותי ה-ADNS של ה-ADC.",
+                "לכל צמתי ה-ADC המשתתפים ב-GSLB יש תצורת GSLB זהה.",
+                "תקשורת Metric Exchange Protocol (MEP) בין אתרים מאובטחת ומוגנת בחומת אש.",
+                "בשימוש ב-Static Proximity, בסיס הנתונים עדכני וקיימות רשומות מותאמות לרשתות פנימיות.",
+                "שמירת אתר (Site persistence) פועלת כראוי בפריסות GSLB של Active/Active.",
+                "אפשרויות אבטחת DNS מוגדרות למניעת התקפות מניעת שירות (DoS) על ADNS."
             ]
         }
-        // Add other categories here in the same format
     ];
 
     const form = document.getElementById('healthCheckForm');
@@ -100,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formHtml += '</tbody></table></div>';
     });
 
-    // Insert after the client details section
     const clientDetails = form.querySelector('.client-details');
     clientDetails.insertAdjacentHTML('afterend', formHtml);
 });
@@ -178,7 +226,6 @@ function generateReport() {
     const reportWindow = window.open('', '_blank');
     reportWindow.document.write(reportHtml);
     reportWindow.document.close();
-    // Give browser time to render before printing
     setTimeout(() => {
         reportWindow.print();
     }, 500);
