@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 "ה-Dashboard אינו מציג רוחב פס יוצא חריג (חשד להתקפת DTLS Amplification DDoS).",
                 "שדרוגי קושחה נבדקים על רכיב ADC נפרד בסביבת 테스트 לפני הטמעה ב-Production.",
                 "עבור VPX על vSphere: כרטיסי הרשת הם VMXNET3 (ולא E1000).",
-                "עבור VPX על vSphere: מוגדר Anti-affinity ב-DRS Cluster עבור זוגות HA.",
+                "עבור VPX על vSphere: מוגדר anti-affinity ב-DRS Cluster עבור זוגות HA.",
                 "עבור VPX על vSphere: משאבי CPU/Memory שמורים, או אם לא, האפשרות Yield CPU מבוטלת.",
                 "רישיונות ה-ADC בנתיב /nsconfig/license/ אינם עומדים לפוג בקרוב.",
                 "עבור ADC פיזי: פורט ה-LOM מחובר, מוגדר, וסיסמתו אינה ברירת המחדל.",
@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 "האפשרות DTLS מופעלת על ה-vServer לתמיכה בפרוטוקול EDT.",
                 "התקשורת ל-StoreFront היא באמצעות HTTPS ומאוזנת עומסים.",
                 "הגדרות ה-STA ב-Gateway תואמות להגדרות ב-StoreFront.",
+                "ה-Callback URL בהגדרות ה-Gateway ב-StoreFront מוגדר רק אם נדרש עבור SmartAccess/FAS.",
                 "עבור אימות דו-שלבי (RADIUS), נבדקה העברה יזומה (failover) משני צמתי ה-HA.",
                 "עבור אימות SAML, מוגדר 'relaystateRule' למניעת חטיפת סשן.",
                 "בשימוש ב-Native OTP, תכונת ה-AD ושדות הכניסה ב-nFactor מוצפנים."
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         formHtml += '</tbody></table></div>';
     });
-
+    
     const clientDetails = form.querySelector('.client-details');
     clientDetails.insertAdjacentHTML('afterend', formHtml);
 });
